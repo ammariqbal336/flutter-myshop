@@ -9,14 +9,15 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final product = Provider.of<Product>(context,listen: false);
-    final cart = Provider.of<CartProvider>(context,listen: false);
+    final product = Provider.of<Product>(context, listen: false);
+    final cart = Provider.of<CartProvider>(context, listen: false);
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
         child: GestureDetector(
-          onTap: (){
-            Navigator.of(context).pushNamed(ProductDetail.routeName,arguments: product);
+          onTap: () {
+            Navigator.of(context)
+                .pushNamed(ProductDetail.routeName, arguments: product);
           },
           child: Image.network(
             product.imageUrl,
@@ -30,9 +31,9 @@ class ProductItem extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           leading: Consumer<Product>(
-            builder: (ctx, product, child) =>
-             IconButton(
-              icon: Icon(product.isFavorite ? Icons.favorite: Icons.favorite_border,
+            builder: (ctx, product, child) => IconButton(
+              icon: Icon(
+                  product.isFavorite ? Icons.favorite : Icons.favorite_border,
                   color: Theme.of(context).colorScheme.secondary),
               onPressed: () {
                 product.toggleStatus();
@@ -42,9 +43,21 @@ class ProductItem extends StatelessWidget {
           trailing: IconButton(
             icon: Icon(Icons.shopping_cart,
                 color: Theme.of(context).colorScheme.secondary),
-                onPressed: (){
-                      cart.addCartItem(product);
-                },
+            onPressed: () {
+              cart.addCartItem(product);
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: const Text("Added item to cart!"),
+                  action: SnackBarAction(
+                    label: 'UNDO',
+                    onPressed: () {
+                      cart.removeSingleItem(product.id);
+                    },
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ),

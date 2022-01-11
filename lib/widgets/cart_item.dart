@@ -5,7 +5,8 @@ import '../provider/cart_provider.dart';
 class CartItem extends StatelessWidget {
   final Cart cart;
   final String productId;
-  const CartItem({required this.cart,required this.productId , Key? key}) : super(key: key);
+  const CartItem({required this.cart, required this.productId, Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,12 +16,37 @@ class CartItem extends StatelessWidget {
         padding: const EdgeInsets.only(right: 15),
         margin: const EdgeInsets.only(right: 15),
         color: Theme.of(context).primaryColor,
-        child: const Icon(Icons.delete,color: Colors.white,),
+        child: const Icon(
+          Icons.delete,
+          color: Colors.white,
+        ),
         alignment: Alignment.centerRight,
       ),
       direction: DismissDirection.endToStart,
-      onDismissed: (direction){
-          Provider.of<CartProvider>(context,listen: false).removeItem(productId);
+      confirmDismiss: (dirextion) {
+        return showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+                  title: const Text("Are you sure?"),
+                  content: const Text("you want to remove this item from cart?"),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(false);
+                      },
+                      child: const Text("No"),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(true);
+                      },
+                      child: const Text("Yes"),
+                    ),
+                  ],
+                ));
+      },
+      onDismissed: (direction) {
+        Provider.of<CartProvider>(context, listen: false).removeItem(productId);
       },
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
